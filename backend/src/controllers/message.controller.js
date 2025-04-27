@@ -7,7 +7,9 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("username avatar _id");
+    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } })
+      .select("_id fullName profilePic") // CHỈ lấy _id và fullName
+      .lean(); // giúp response nhẹ hơn, nhanh hơn
 
     res.status(200).json(filteredUsers);
   } catch (error) {
@@ -15,6 +17,7 @@ export const getUsersForSidebar = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 export const getMessages = async (req, res) => {
   try {
